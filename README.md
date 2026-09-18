@@ -13,6 +13,10 @@ A simple personal todo tracker for organizing daily tasks, weekly goals, and fut
 3. Mark completed items with `[x]`.
 4. Keep the backlog updated as new tasks appear.
 
+## Open the app
+
+Double-click [open-todo.bat](open-todo.bat) to open the todo app in your default external browser. You can also open [index.html](index.html) directly.
+
 ## Suggested structure
 
 - Today: immediate priorities
