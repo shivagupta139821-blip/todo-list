@@ -25,6 +25,7 @@
       color: var(--ink);
       background: radial-gradient(circle at 15% 10%, #e6efe5 0, transparent 30%), var(--paper);
       font-family: Georgia, "Times New Roman", serif;
+      animation: page-in .7s ease both;
     }
 
     main {
@@ -40,6 +41,8 @@
 
     .app { display: grid; grid-template-columns: 1.4fr .8fr; gap: 20px; }
     .panel { background: rgba(255, 253, 248, .9); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    .tasks-panel { animation: slide-up .65s .12s ease both; }
+    .side-panel { animation: slide-up .65s .24s ease both; }
     .tasks-panel { padding: 24px; }
     .side-panel { padding: 24px; align-self: start; }
 
@@ -47,29 +50,54 @@
     input[type="text"] { min-width: 0; flex: 1; border: 1px solid var(--line); border-radius: 5px; padding: 14px 15px; color: var(--ink); background: #fff; font: 16px Georgia, serif; }
     input[type="text"]:focus { outline: 3px solid rgba(217, 108, 67, .18); border-color: var(--accent); }
     button { border: 0; border-radius: 5px; cursor: pointer; font: 700 13px Arial, sans-serif; }
-    .add-button { padding: 0 20px; color: #fff; background: var(--accent); }
-    .add-button:hover { background: var(--accent-dark); }
+    .add-button { padding: 0 20px; color: #fff; background: var(--accent); transition: transform .2s ease, background .2s ease; }
+    .add-button:hover { background: var(--accent-dark); transform: translateY(-2px); }
+    .add-button:active { transform: translateY(0) scale(.97); }
 
     .section-heading { display: flex; justify-content: space-between; align-items: center; margin: 26px 0 10px; }
     .section-heading:first-of-type { margin-top: 0; }
     h2 { margin: 0; font-size: 23px; font-weight: 400; }
     .count { color: var(--muted); font: 12px Arial, sans-serif; }
     ul { list-style: none; padding: 0; margin: 0; }
-    li { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 17px; }
+    li { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 17px; animation: task-in .4s var(--delay, 0s) ease both; }
     li:last-child { border-bottom: 0; }
     li.done span { color: var(--muted); text-decoration: line-through; }
+    li.done { animation: task-in .4s ease both, complete-pulse .5s .1s ease both; }
     .check { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
     li span { flex: 1; line-height: 1.35; }
-    .delete { padding: 5px 7px; color: var(--muted); background: transparent; font-size: 17px; }
-    .delete:hover { color: var(--accent-dark); }
+    .delete { padding: 5px 7px; color: var(--muted); background: transparent; font-size: 17px; transition: color .2s ease, transform .2s ease; }
+    .delete:hover { color: var(--accent-dark); transform: rotate(8deg) scale(1.15); }
     .empty { color: var(--muted); font: 14px Arial, sans-serif; }
 
     .side-panel h2 { margin-bottom: 20px; }
     .progress-track { height: 10px; overflow: hidden; margin-bottom: 12px; border-radius: 99px; background: var(--mint); }
-    .progress-bar { width: 0; height: 100%; border-radius: inherit; background: var(--accent); transition: width .25s ease; }
+    .progress-bar { width: 0; height: 100%; border-radius: inherit; background: var(--accent); transition: width .5s cubic-bezier(.22, 1, .36, 1); }
     .progress-copy { display: flex; justify-content: space-between; color: var(--muted); font: 13px Arial, sans-serif; }
     .clear-button { width: 100%; margin-top: 28px; padding: 12px; color: var(--accent-dark); background: #f8e4db; }
     .clear-button:hover { background: #f2d3c7; }
+
+    @keyframes page-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes task-in {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes complete-pulse {
+      50% { background: rgba(219, 233, 223, .6); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
 
     @media (max-width: 680px) {
       main { padding-top: 34px; }
@@ -144,6 +172,7 @@
       tasks.forEach((task, index) => {
         const item = document.createElement("li");
         item.className = task.done ? "done" : "";
+        item.style.setProperty("--delay", `${Math.min(index * 45, 360)}ms`);
 
         const checkbox = document.createElement("input");
         checkbox.className = "check";
